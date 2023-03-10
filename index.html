@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+        body {
+            overflow: hidden;
+        }
+        canvas {
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas></canvas>
+    <script>
+        let speed = 50, strNum = .99, size = 20, color = 'rgb(255,255,255)', strArr = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890';
+        window.addEventListener('load', function () {
+            console.log(speed);
+            console.log(size);
+            const cvs = document.querySelector('canvas');
+            const ctx = cvs.getContext('2d');
+            cvs.width = window.innerWidth * devicePixelRatio;
+            cvs.height = window.innerHeight * devicePixelRatio;
+            // 
+            const fontSize = size * devicePixelRatio;
+            ctx.font = `${fontSize}px "Roboto Mono"`;
+            const columnCount = Math.floor(cvs.width / fontSize); // 画布的宽 / 字体大小 = 字体数量
+            const charIndex = new Array(columnCount).fill(0); // 创建一个数组初始化为0
+            function draw() {
+                ctx.fillStyle = 'rgba(0,0,0,0.1)';
+                ctx.fillRect(0, 0, cvs.width, cvs.height);
+                ctx.fillStyle = color; // 文字颜色
+                ctx.textBaseline = 'top'; // 顶部对齐
+                ctx.textAlign = 'center'; // 居中对齐
+                for (let i = 0; i < columnCount; i++) {
+                    const getStr = getRandomChar();
+                    const x = i * fontSize;
+                    const y = charIndex[i] * fontSize;
+                    ctx.fillText(getStr, x, y);
+                    if (y > cvs.height && Math.random() > strNum) {
+                        charIndex[i] = 0;
+                    }
+                    else {
+                        charIndex[i]++;
+                    }
+                }
+            }
+            function getRandomChar() {
+                const str = strArr;
+                return str[Math.floor(Math.random() * str.length)];
+            }
+            draw();
+            setInterval(draw, speed);
+        });
+    </script>
+</body>
+
+</html>
