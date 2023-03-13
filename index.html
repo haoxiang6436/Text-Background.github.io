@@ -12,9 +12,11 @@
             margin: 0px;
             font-family: Arial, Helvetica, sans-serif;
         }
+
         body {
             overflow: hidden;
         }
+
         canvas {
             width: 100vw;
             height: 100vh;
@@ -26,11 +28,17 @@
     <canvas></canvas>
     <script>
         const cvs = document.querySelector('canvas');
+        const ctx = cvs.getContext('2d');
+        cvs.width = window.innerWidth * devicePixelRatio;
+        cvs.height = window.innerHeight * devicePixelRatio;
+        let fontSize,columnCount,charIndex;
         let speed = 50, probability = .99, size = 20, color = 'rgb(255,255,255)', bgcolor = 'rgb(0,0,0)', text = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890';
         window.wallpaperPropertyListener = {
             applyUserProperties: function (properties) {
                 if (properties.text_speed) {
+                    clearInterval(IntervallVariable);
                     speed = properties.text_speed.value;
+                    IntervallVariable = setInterval(draw, speed);
                 }
                 if (properties.text_arr) {
                     if (properties.text_arr.value == '') {
@@ -40,7 +48,10 @@
                     }
                 }
                 if (properties.text_size) {
+                    clearInterval(IntervallVariable);
                     size = properties.text_size.value;
+                    UpdateFontSize();
+                    IntervallVariable = setInterval(draw, speed);
                 }
                 if (properties.text_color) {
                     let customColor = properties.text_color.value.split(' ');
@@ -49,7 +60,6 @@
                     });
                     let customColorAsCSS = 'rgb(' + customColor + ')';
                     color = customColorAsCSS;
-                    console.log(color);
                 }
                 if (properties.bg_color) {
                     console.log(properties.bg_color.value);
@@ -65,41 +75,39 @@
                 }
             },
         };
-        setTimeout(function () {
-            const ctx = cvs.getContext('2d');
-            cvs.width = window.innerWidth * devicePixelRatio;
-            cvs.height = window.innerHeight * devicePixelRatio;
-            const fontSize = size * devicePixelRatio;
+
+        function UpdateFontSize() {
+            fontSize = size * devicePixelRatio;
+            columnCount = Math.floor(cvs.width / fontSize); // 画布的宽 / 字体大小 = 字体数量
+            charIndex = new Array(columnCount).fill(0); // 创建一个数组初始化为0
+        }
+        UpdateFontSize()
+        function draw() {
             ctx.font = `${fontSize}px "Roboto Mono" `;
-            const columnCount = Math.floor(cvs.width / fontSize); // 画布的宽 / 字体大小 = 字体数量
-            const charIndex = new Array(columnCount).fill(0); // 创建一个数组初始化为0
-            function draw() {
-                let fillColor = bgcolor.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/, "rgba($1, $2, $3, .1)");
-                ctx.fillStyle = fillColor;
-                ctx.fillRect(0, 0, cvs.width, cvs.height);
-                ctx.fillStyle = color; // 文字颜色
-                ctx.textBaseline = 'top'; // 顶部对齐
-                ctx.textAlign = 'center'; // 居中对齐
-                for (let i = 0; i < columnCount; i++) {
-                    const getStr = getRandomChar();
-                    const x = i * fontSize;
-                    const y = charIndex[i] * fontSize;
-                    ctx.fillText(getStr, x, y);
-                    if (y > cvs.height && Math.random() > probability) {
-                        charIndex[i] = 0;
-                    }
-                    else {
-                        charIndex[i]++;
-                    }
+            let fillColor = bgcolor.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/, "rgba($1, $2, $3, .1)");
+            ctx.fillStyle = fillColor;
+            ctx.fillRect(0, 0, cvs.width, cvs.height);
+            ctx.fillStyle = color; // 文字颜色
+            ctx.textBaseline = 'top'; // 顶部对齐
+            ctx.textAlign = 'center'; // 居中对齐
+            for (let i = 0; i < columnCount; i++) {
+                const getStr = getRandomChar();
+                const x = i * fontSize;
+                const y = charIndex[i] * fontSize;
+                ctx.fillText(getStr, x, y);
+                if (y > cvs.height && Math.random() > probability) {
+                    charIndex[i] = 0;
+                }
+                else {
+                    charIndex[i]++;
                 }
             }
-            function getRandomChar() {
-                const str = text;
-                return str[Math.floor(Math.random() * str.length)];
-            }
-            draw();
-            setInterval(draw, speed);
-        }, 200);
+        }
+        function getRandomChar() {
+            const str = text;
+            return str[Math.floor(Math.random() * str.length)];
+        }
+        let IntervallVariable = setInterval(draw, speed);
     </script>
 </body>
 
