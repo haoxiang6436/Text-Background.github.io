@@ -1,6 +1,6 @@
 {
 	"contentrating" : "Everyone",
-	"description" : "一个基于canvasAPI的纯网页壁纸 动态文字背景 黑客帝国 文字雨\n添加自定义【文本内容】【文本颜色】【背景颜色】【刷新概率】【刷新速度】【刷新概率】\n这里是仓库地址，需要源码自取\nhttps://github.com/haoxiang6436/textbackground.github.io.git",
+	"description" : "一个基于canvasAPI的纯网页壁纸 动态文字背景 黑客帝国 文字雨\n添加自定义【顺序文本】【文本内容】【文本颜色】【背景颜色】【刷新概率】【刷新速度】【刷新概率】\n2023.3.25 新增 --- 以文本顺序流动\n\n这里是仓库地址，需要源码自取\nhttps://github.com/haoxiang6436/textbackground.github.io.git",
 	"file" : "index.html",
 	"general" : 
 	{
@@ -8,8 +8,8 @@
 		{
 			"bg_color" : 
 			{
-				"index" : 5,
-				"order" : 105,
+				"index" : 6,
+				"order" : 106,
 				"text" : "<h4>[背景颜色]</h4>",
 				"type" : "color",
 				"value" : "0 0 0"
@@ -23,16 +23,16 @@
 			},
 			"text_arr" : 
 			{
-				"index" : 3,
-				"order" : 103,
+				"index" : 4,
+				"order" : 104,
 				"text" : "<h4>[文本内容]</h4>",
 				"type" : "textinput",
 				"value" : ""
 			},
 			"text_color" : 
 			{
-				"index" : 4,
-				"order" : 104,
+				"index" : 5,
+				"order" : 105,
 				"text" : "<h4>[字体颜色]</h4>",
 				"type" : "color",
 				"value" : "1 1 1"
@@ -40,10 +40,10 @@
 			"text_probability" : 
 			{
 				"fraction" : true,
-				"index" : 2,
+				"index" : 3,
 				"max" : 0.999,
 				"min" : 0.95,
-				"order" : 102,
+				"order" : 103,
 				"precision" : 4,
 				"step" : 0.001,
 				"text" : "<h4>[刷新数量]</h4>",
@@ -53,10 +53,10 @@
 			"text_size" : 
 			{
 				"fraction" : false,
-				"index" : 0,
+				"index" : 1,
 				"max" : 100,
 				"min" : 10,
-				"order" : 100,
+				"order" : 101,
 				"text" : "<h4>[字体大小]</h4>",
 				"type" : "slider",
 				"value" : 20
@@ -64,13 +64,21 @@
 			"text_speed" : 
 			{
 				"fraction" : false,
-				"index" : 1,
+				"index" : 2,
 				"max" : 100,
 				"min" : 10,
-				"order" : 101,
+				"order" : 102,
 				"text" : "<h4>[流动速度]</h4>",
 				"type" : "slider",
 				"value" : 50
+			},
+			"textdisplay" : 
+			{
+				"index" : 0,
+				"order" : 100,
+				"text" : "<h4>[顺序播放]</h4>",
+				"type" : "bool",
+				"value" : false
 			}
 		}
 	},
@@ -78,7 +86,7 @@
 	"tags" : [ "Cyberpunk" ],
 	"title" : "一个非常非常炫酷的动态文字壁纸",
 	"type" : "web",
-	"version" : 5,
+	"version" : 6,
 	"visibility" : "public",
 	"workshopid" : "2944793369",
 	"workshopurl" : "steam://url/CommunityFilePage/2944793369"

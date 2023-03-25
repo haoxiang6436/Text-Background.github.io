@@ -15,6 +15,7 @@
 
         body {
             overflow: hidden;
+            background-color: #000;
         }
 
         canvas {
@@ -29,60 +30,39 @@
     <script>
         const cvs = document.querySelector('canvas');
         const ctx = cvs.getContext('2d');
-        cvs.width = window.innerWidth * devicePixelRatio;
-        cvs.height = window.innerHeight * devicePixelRatio;
-        let fontSize,columnCount,charIndex;
-        let speed = 50, probability = .99, size = 20, color = 'rgb(255,255,255)', bgcolor = 'rgb(0,0,0)', text = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890';
-        window.wallpaperPropertyListener = {
-            applyUserProperties: function (properties) {
-                if (properties.text_speed) {
-                    clearInterval(IntervallVariable);
-                    speed = properties.text_speed.value;
-                    IntervallVariable = setInterval(draw, speed);
-                }
-                if (properties.text_arr) {
-                    if (properties.text_arr.value == '') {
-                        text = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890';
-                    } else {
-                        text = properties.text_arr.value;
-                    }
-                }
-                if (properties.text_size) {
-                    clearInterval(IntervallVariable);
-                    size = properties.text_size.value;
-                    UpdateFontSize();
-                    IntervallVariable = setInterval(draw, speed);
-                }
-                if (properties.text_color) {
-                    let customColor = properties.text_color.value.split(' ');
-                    customColor = customColor.map(function (c) {
-                        return Math.ceil(c * 255);
-                    });
-                    let customColorAsCSS = 'rgb(' + customColor + ')';
-                    color = customColorAsCSS;
-                }
-                if (properties.bg_color) {
-                    console.log(properties.bg_color.value);
-                    let customBg_color = properties.bg_color.value.split(' ');
-                    customBg_color = customBg_color.map(function (c) {
-                        return Math.ceil(c * 255);
-                    });
-                    let customBg_colorAsCSS = 'rgb(' + customBg_color + ')';
-                    bgcolor = customBg_colorAsCSS;
-                }
-                if (properties.text_probability) {
-                    probability = properties.text_probability.value;
-                }
-            },
-        };
+        cvs.width = window.innerWidth * devicePixelRatio || 1;
+        cvs.height = window.innerHeight * devicePixelRatio || 1;
+        let fontSize, columnCount, charIndex;
+        let speed = 50, probability = .99, size = 20, color = 'rgb(255,255,255)', bgcolor = 'rgb(0,0,0)', text = '123456789';
 
         function UpdateFontSize() {
             fontSize = size * devicePixelRatio;
             columnCount = Math.floor(cvs.width / fontSize); // 画布的宽 / 字体大小 = 字体数量
             charIndex = new Array(columnCount).fill(0); // 创建一个数组初始化为0
+
         }
-        UpdateFontSize()
+        UpdateFontSize();
+
         function draw() {
+            ctx.font = `${fontSize}px "Roboto Mono" `;
+            let fillColor = bgcolor.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/, "rgba($1, $2, $3, .1)");
+            ctx.fillStyle = fillColor;
+            ctx.fillRect(0, 0, cvs.width, cvs.height);
+            ctx.fillStyle = color; // 文字颜色
+            ctx.textBaseline = 'top'; // 顶部对齐
+            for (let i = 0; i < columnCount; i++) {
+                const x = i * fontSize;
+                const y = charIndex[i] * fontSize;
+                const getStr = text[charIndex[i] % text.length];
+                ctx.fillText(getStr, x, y);
+                if (y > cvs.height && Math.random() > probability) {
+                    charIndex[i] = 0;
+                } else {
+                    charIndex[i]++;
+                }
+            }
+        }
+        function draw2() {
             ctx.font = `${fontSize}px "Roboto Mono" `;
             let fillColor = bgcolor.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/, "rgba($1, $2, $3, .1)");
             ctx.fillStyle = fillColor;
@@ -107,7 +87,83 @@
             const str = text;
             return str[Math.floor(Math.random() * str.length)];
         }
-        let IntervallVariable = setInterval(draw, speed);
+
+        let intervalVariable = setInterval(draw2, speed);
+
+
+    </script>
+    <script>
+        let getTextOrder = false;
+        window.wallpaperPropertyListener = {
+            applyUserProperties: function (properties) {
+                if (properties.textdisplay) {
+                    getTextOrder = properties.textdisplay.value;
+                    if (getTextOrder) {
+                        UpdateFontSize();
+                        clearInterval(intervalVariable);
+                        intervalVariable = setInterval(draw, speed);
+                    } else {
+                        UpdateFontSize();
+                        clearInterval(intervalVariable);
+                        intervalVariable = setInterval(draw2, speed);
+                    }
+                }
+                if (properties.text_speed) {
+                    speed = properties.text_speed.value;
+                    if (getTextOrder) {
+                        UpdateFontSize();
+                        clearInterval(intervalVariable);
+                        intervalVariable = setInterval(draw, speed);
+                    } else {
+                        UpdateFontSize();
+                        clearInterval(intervalVariable);
+                        intervalVariable = setInterval(draw2, speed);
+                    }
+                }
+                if (properties.text_arr) {
+                    if (properties.text_arr.value == '') {
+                        text = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890';
+                    } else {
+                        text = properties.text_arr.value;
+                    }
+                }
+                if (properties.text_size) {
+                    let fillColor = bgcolor.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/, "rgba($1, $2, $3, 1)");
+                    ctx.fillStyle = fillColor;
+                    size = properties.text_size.value;
+                    if (getTextOrder) {
+                        UpdateFontSize();
+                        clearInterval(intervalVariable);
+                        intervalVariable = setInterval(draw, speed);
+                    } else {
+                        UpdateFontSize();
+                        clearInterval(intervalVariable);
+                        intervalVariable = setInterval(draw2, speed);
+                    }
+                }
+                if (properties.text_color) {
+                    let customColor = properties.text_color.value.split(' ');
+                    customColor = customColor.map(function (c) {
+                        return Math.ceil(c * 255);
+                    });
+                    let customColorAsCSS = 'rgb(' + customColor + ')';
+                    color = customColorAsCSS;
+                }
+                if (properties.bg_color) {
+                    console.log(properties.bg_color.value);
+                    let customBg_color = properties.bg_color.value.split(' ');
+                    customBg_color = customBg_color.map(function (c) {
+                        return Math.ceil(c * 255);
+                    });
+                    let customBg_colorAsCSS = 'rgb(' + customBg_color + ')';
+                    bgcolor = customBg_colorAsCSS;
+                }
+                if (properties.text_probability) {
+                    probability = properties.text_probability.value;
+                }
+            },
+        };
+
     </script>
 </body>
 
